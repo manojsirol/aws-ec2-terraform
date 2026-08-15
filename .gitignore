@@ -1,0 +1,9 @@
+# Sensitive keys and credentials
+*.pem
+
+# Terraform local state and backup files
+*.tfstate
+*.tfstate.*
+
+# Terraform plugin directory
+.terraform/
