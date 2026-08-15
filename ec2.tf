@@ -1,7 +1,6 @@
 resource "aws_key_pair" "keyus" {
-  key_name   = "keyus"
-  public_key = file("key.pem.pub")
-
+  key_name   = var.key_name
+  public_key = file(var.public_key_path)
 }
 
 resource "aws_default_vpc" "default" {
@@ -12,7 +11,7 @@ resource "aws_default_vpc" "default" {
 
 resource "aws_security_group" "my_sg" {
   name        = "my_sg"
-  description = "My security group"
+  description = "Security Group allowing SSH and HTTP access"
   vpc_id      = aws_default_vpc.default.id
 
   ingress {
@@ -36,18 +35,17 @@ resource "aws_security_group" "my_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
   }
-
 }
 
 resource "aws_instance" "mynewcrete" {
-  ami             = "ami-0b6d9d3d33ba97d99"
-  instance_type   = "t3.micro"
+  ami             = var.ami_id
+  instance_type   = var.instance_type
   key_name        = aws_key_pair.keyus.key_name
   security_groups = [aws_security_group.my_sg.name]
 
   tags = {
-    Name = "MyNewCrete"
+    Name = var.instance_name
   }
-
 }

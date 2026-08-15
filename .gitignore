@@ -1,9 +1,34 @@
-# Sensitive keys and credentials
+# Private/Public SSH Keys and Secrets
 *.pem
+*.pub
+*.key
+*.crt
+*.cer
+id_rsa
+id_ed25519
 
-# Terraform local state and backup files
+# Terraform Local State & Backup Files
 *.tfstate
 *.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 
-# Terraform plugin directory
+# Terraform Sensitive Variable Files
+*.tfvars
+*.tfvars.json
+terraform.tfvars
+terraform.tfvars.json
+
+# Terraform Provider Cache & CLI Configuration
 .terraform/
+.terraform.lock.hcl.bak
+
+# OS & Editor Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,72 +1,90 @@
-# AWS EC2 Infrastructure with Terraform
+# Automated AWS EC2 Infrastructure with Terraform
 
-This repository contains Terraform configuration files to provision an AWS EC2 instance along with its associated Key Pair, Security Group, and Default VPC setup in the `us-east-1` region.
+![Terraform](https://img.shields.io/badge/Terraform-1.0%2B-623CE4?logo=terraform)
+![AWS](https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazon-aws)
+![Security](https://img.shields.io/badge/Security-Strict-green)
 
-## Project Structure
-
-```text
-├── ec2.tf                 # Defines Key Pair, Default VPC, Security Group, and EC2 instance
-├── providr.tf             # Configures the AWS provider and target region (us-east-1)
-├── .terraform.lock.hcl    # Terraform provider lock file
-├── key.pem.pub            # Public key file used for EC2 Key Pair resource
-├── README.md              # Project documentation
-└── .gitignore             # Excludes state files, cache, and private keys from Git
-```
-
-## Infrastructure Resources
-
-1. **AWS Key Pair (`aws_key_pair.keyus`)**:
-   - Creates an EC2 SSH key pair named `keyus` using `key.pem.pub`.
-
-2. **Default VPC (`aws_default_vpc.default`)**:
-   - References the default VPC in the AWS account for resource placement.
-
-3. **Security Group (`aws_security_group.my_sg`)**:
-   - **Ingress Port 22 (SSH)**: Allows SSH access from any IP (`0.0.0.0/0`).
-   - **Ingress Port 80 (HTTP)**: Allows web traffic on port 80 from any IP (`0.0.0.0/0`).
-   - **Egress**: Allows all outbound traffic.
-
-4. **EC2 Instance (`aws_instance.mynewcrete`)**:
-   - **Name Tag**: `MyNewCrete`
-   - **Instance Type**: `t3.micro`
-   - **AMI**: `ami-0b6d9d3d33ba97d99`
-   - **Associated Resources**: Attached to `keyus` Key Pair and `my_sg` Security Group.
+A production-grade, modular Terraform configuration designed to provision an **AWS EC2 Instance** with customized SSH Key Pair management, Security Group rules (SSH & HTTP), and Default VPC association in AWS `us-east-1`.
 
 ---
 
-## Security Notes
+## 🔒 Security Policy & Data Protection
 
 > [!IMPORTANT]
-> The private SSH key (`key.pem`) and Terraform local state files (`*.tfstate`) are intentionally ignored via `.gitignore` to prevent sensitive credentials and state data from being committed to version control.
+> **Strict Credentials & Key Protection**:
+> - **Zero Credentials Committed**: AWS Access Keys are passed securely via AWS CLI / Environment Variables.
+> - **Private Keys Excluded**: Local private keys (`*.pem`, `*.key`) and public keys (`*.pub`) are strictly excluded via `.gitignore`.
+> - **State Protection**: Local Terraform state files (`*.tfstate`) containing sensitive infrastructure state are prevented from being tracked or committed.
 
 ---
 
-## Prerequisites
+## 📁 Repository Structure
 
-- [Terraform CLI](https://www.terraform.io/downloads) (v1.0+)
-- AWS CLI configured with appropriate IAM credentials (`aws configure`)
-- SSH keypair public file (`key.pem.pub`) in the project directory
+```text
+├── ec2.tf                   # EC2 Instance, Security Group, and Key Pair resource definitions
+├── providr.tf               # Terraform AWS Provider & version constraints
+├── variables.tf             # Input variable declarations
+├── outputs.tf               # Infrastructure outputs (Instance ID, Public IP, SG ID)
+├── terraform.tfvars.example # Template variable configuration file
+├── .gitignore               # Strict security exclusion rules for Git
+└── README.md                # Project documentation
+```
 
 ---
 
-## Usage Instructions
+## 🚀 Infrastructure Resources
 
-1. **Initialize Terraform**:
-   ```bash
-   terraform init
-   ```
+| Resource | Terraform Name | Description |
+| :--- | :--- | :--- |
+| **EC2 Instance** | `aws_instance.mynewcrete` | `t3.micro` instance running target AMI |
+| **Security Group** | `aws_security_group.my_sg` | Ingress ports `22` (SSH) & `80` (HTTP), full egress |
+| **SSH Key Pair** | `aws_key_pair.keyus` | Key pair registered from local public key |
+| **Default VPC** | `aws_default_vpc.default` | Auto-detected default VPC for region deployment |
 
-2. **Review Infrastructure Plan**:
-   ```bash
-   terraform plan
-   ```
+---
 
-3. **Deploy Resources**:
-   ```bash
-   terraform apply
-   ```
+## ⚙️ Input Variables
 
-4. **Clean Up Resources**:
-   ```bash
-   terraform destroy
-   ```
+| Variable | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `aws_region` | `string` | `us-east-1` | Target AWS deployment region |
+| `instance_type` | `string` | `t3.micro` | AWS EC2 instance type |
+| `ami_id` | `string` | `ami-0b6d9d3d33ba97d99` | Amazon Machine Image ID |
+| `key_name` | `string` | `keyus` | Key pair identifier in AWS |
+| `public_key_path` | `string` | `key.pem.pub` | Local path to public SSH key |
+
+---
+
+## 🛠️ Quickstart Guide
+
+### 1. Prerequisites
+- [Terraform CLI](https://www.terraform.io/downloads) (v1.0+) installed.
+- [AWS CLI](https://aws.amazon.com/cli/) installed and authenticated (`aws configure`).
+- SSH Public Key file available locally.
+
+### 2. Deployment Steps
+
+```bash
+# Clone repository
+git clone https://github.com/manojsirol/aws-ec2-terraform.git
+cd aws-ec2-terraform
+
+# Initialize Terraform providers
+terraform init
+
+# Validate configuration syntax
+terraform validate
+
+# Preview infrastructure changes
+terraform plan
+
+# Apply infrastructure plan
+terraform apply
+```
+
+### 3. Cleanup Resources
+
+To destroy all provisioned AWS resources when finished:
+```bash
+terraform destroy
+```
