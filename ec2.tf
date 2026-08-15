@@ -1,4 +1,4 @@
-resource "aws_key_pair" "keyus" {
+resource "aws_key_pair" "deployer" {
   key_name   = var.key_name
   public_key = file(var.public_key_path)
 }
@@ -9,8 +9,8 @@ resource "aws_default_vpc" "default" {
   }
 }
 
-resource "aws_security_group" "my_sg" {
-  name        = "my_sg"
+resource "aws_security_group" "web_sg" {
+  name        = "web_sg"
   description = "Security Group allowing SSH and HTTP access"
   vpc_id      = aws_default_vpc.default.id
 
@@ -39,11 +39,11 @@ resource "aws_security_group" "my_sg" {
   }
 }
 
-resource "aws_instance" "mynewcrete" {
+resource "aws_instance" "web" {
   ami             = var.ami_id
   instance_type   = var.instance_type
-  key_name        = aws_key_pair.keyus.key_name
-  security_groups = [aws_security_group.my_sg.name]
+  key_name        = aws_key_pair.deployer.key_name
+  security_groups = [aws_security_group.web_sg.name]
 
   tags = {
     Name = var.instance_name

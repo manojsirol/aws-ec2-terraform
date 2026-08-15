@@ -8,13 +8,13 @@ A production-grade, modular Terraform configuration designed to provision an **A
 
 ---
 
-## 🔒 Security Policy & Data Protection
+## 🔒 Security Policy & Zero-Trust Guidelines
 
 > [!IMPORTANT]
-> **Strict Credentials & Key Protection**:
-> - **Zero Credentials Committed**: AWS Access Keys are passed securely via AWS CLI / Environment Variables.
-> - **Private Keys Excluded**: Local private keys (`*.pem`, `*.key`) and public keys (`*.pub`) are strictly excluded via `.gitignore`.
-> - **State Protection**: Local Terraform state files (`*.tfstate`) containing sensitive infrastructure state are prevented from being tracked or committed.
+> **Strict Credentials & Secret Protection**:
+> - **Zero Passwords / Access Keys in Code**: AWS authentication is strictly handled out-of-band via AWS CLI (`aws configure`) or environment variables (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`).
+> - **Private & Public Keys Excluded**: Local private keys (`*.pem`, `*.key`) and public keys (`*.pub`) are strictly excluded via `.gitignore`.
+> - **State Files Ignored**: Terraform state files (`*.tfstate`) containing infrastructure secrets are ignored to prevent leaks.
 
 ---
 
@@ -36,9 +36,9 @@ A production-grade, modular Terraform configuration designed to provision an **A
 
 | Resource | Terraform Name | Description |
 | :--- | :--- | :--- |
-| **EC2 Instance** | `aws_instance.mynewcrete` | `t3.micro` instance running target AMI |
-| **Security Group** | `aws_security_group.my_sg` | Ingress ports `22` (SSH) & `80` (HTTP), full egress |
-| **SSH Key Pair** | `aws_key_pair.keyus` | Key pair registered from local public key |
+| **EC2 Instance** | `aws_instance.web` | `t3.micro` instance running target AMI |
+| **Security Group** | `aws_security_group.web_sg` | Ingress ports `22` (SSH) & `80` (HTTP), full egress |
+| **SSH Key Pair** | `aws_key_pair.deployer` | Key pair registered from local public key |
 | **Default VPC** | `aws_default_vpc.default` | Auto-detected default VPC for region deployment |
 
 ---
@@ -50,8 +50,8 @@ A production-grade, modular Terraform configuration designed to provision an **A
 | `aws_region` | `string` | `us-east-1` | Target AWS deployment region |
 | `instance_type` | `string` | `t3.micro` | AWS EC2 instance type |
 | `ami_id` | `string` | `ami-0b6d9d3d33ba97d99` | Amazon Machine Image ID |
-| `key_name` | `string` | `keyus` | Key pair identifier in AWS |
-| `public_key_path` | `string` | `key.pem.pub` | Local path to public SSH key |
+| `key_name` | `string` | `deployer-key` | Key pair identifier in AWS |
+| `public_key_path` | `string` | `~/.ssh/id_rsa.pub` | Local path to public SSH key |
 
 ---
 
@@ -60,7 +60,7 @@ A production-grade, modular Terraform configuration designed to provision an **A
 ### 1. Prerequisites
 - [Terraform CLI](https://www.terraform.io/downloads) (v1.0+) installed.
 - [AWS CLI](https://aws.amazon.com/cli/) installed and authenticated (`aws configure`).
-- SSH Public Key file available locally.
+- Local SSH public key (`~/.ssh/id_rsa.pub`).
 
 ### 2. Deployment Steps
 
